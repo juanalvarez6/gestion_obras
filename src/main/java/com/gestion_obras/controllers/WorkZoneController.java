@@ -1,6 +1,5 @@
 package com.gestion_obras.controllers;
 
-import com.gestion_obras.models.entities.Task;
 import com.gestion_obras.models.entities.WorkZone;
 import com.gestion_obras.services.workzone.WorkZoneServiceManager;
 import jakarta.validation.Valid;
@@ -47,7 +46,14 @@ public class WorkZoneController {
 
         WorkZone workZone = existingWorkZone.get();
 
+
         if (updatedWorkZone.getName() != null) workZone.setName(updatedWorkZone.getName());
+        if (updatedWorkZone.getDescription() != null) workZone.setDescription(updatedWorkZone.getDescription());
+        if (updatedWorkZone.getLatitude() != null) workZone.setLatitude(updatedWorkZone.getLatitude());
+        if (updatedWorkZone.getLongitude() != null) workZone.setLongitude(updatedWorkZone.getLongitude());
+        if (updatedWorkZone.getStatus() != null) workZone.setStatus(updatedWorkZone.getStatus());
+        if (updatedWorkZone.getProject() != null) workZone.setProject(updatedWorkZone.getProject());
+
 
         WorkZone savedWorkZone = this.workZoneServiceManager.save(workZone);
         return ResponseEntity.ok(savedWorkZone);

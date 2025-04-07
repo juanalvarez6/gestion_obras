@@ -23,7 +23,7 @@ public class WorkZone {
     @Column(name = "name", nullable = false, length = 100)
     private String name;
 
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "latitude", nullable = false, precision = 10, scale = 8)
@@ -31,4 +31,13 @@ public class WorkZone {
 
     @Column(name = "longitude", nullable = false, precision = 11, scale = 8)
     private BigDecimal longitude;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, columnDefinition = "ENUM('EN_PROGRESO', 'FINALIZADA')")
+    private Status status;
+
+    public enum Status {
+        EN_PROGRESO,
+        FINALIZADA
+    }
 }

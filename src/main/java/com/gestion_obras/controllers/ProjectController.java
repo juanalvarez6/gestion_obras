@@ -47,6 +47,10 @@ public class ProjectController {
 
         Project project = existingProject.get();
 
+        if (updatedProject.getName() != null) project.setName(updatedProject.getName());
+        if (updatedProject.getDescription() != null) project.setDescription(updatedProject.getDescription());
+        if (updatedProject.getStartDate() != null) project.setStartDate(updatedProject.getStartDate());
+        if (updatedProject.getEndDate() != null) project.setEndDate(updatedProject.getEndDate());
         if (updatedProject.getStatus() != null) project.setStatus(updatedProject.getStatus());
 
         Project savedProject = this.projectServiceManager.save(project);
