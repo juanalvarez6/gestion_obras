@@ -17,9 +17,7 @@ public class WorkZoneServiceManager implements WorkZoneService {
 
     @Override
     public List<WorkZone> findAll() {
-        List<WorkZone> workZone = new ArrayList<>();
-        this.workZonesRepository.findAll().forEach(workZone::add);
-        return workZone;
+        return new ArrayList<>(this.workZonesRepository.findAll());
     }
 
     @Override

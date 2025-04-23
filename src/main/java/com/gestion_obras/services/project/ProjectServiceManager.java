@@ -17,9 +17,7 @@ public class ProjectServiceManager implements ProjectService {
 
     @Override
     public List<Project> findAll() {
-        List<Project> projects = new ArrayList<>();
-        this.projectRepository.findAll().forEach(projects::add);
-        return projects;
+        return new ArrayList<>(this.projectRepository.findAll());
     }
 
     @Override

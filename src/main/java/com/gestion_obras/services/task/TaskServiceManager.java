@@ -17,9 +17,7 @@ public class TaskServiceManager implements TaskService {
 
     @Override
     public List<Task> findAll() {
-        List<Task> task = new ArrayList<>();
-        this.taskRepository.findAll().forEach(task::add);
-        return task;
+        return new ArrayList<>(this.taskRepository.findAll());
     }
 
     @Override
