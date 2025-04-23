@@ -1,6 +1,5 @@
 package com.gestion_obras.services.task;
 
-import com.gestion_obras.models.entities.Project;
 import com.gestion_obras.models.entities.Task;
 import com.gestion_obras.repositories.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;

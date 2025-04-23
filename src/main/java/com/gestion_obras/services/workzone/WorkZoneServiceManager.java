@@ -1,6 +1,5 @@
 package com.gestion_obras.services.workzone;
 
-import com.gestion_obras.models.entities.Project;
 import com.gestion_obras.models.entities.WorkZone;
 import com.gestion_obras.repositories.WorkZonesRepository;
 import org.springframework.beans.factory.annotation.Autowired;

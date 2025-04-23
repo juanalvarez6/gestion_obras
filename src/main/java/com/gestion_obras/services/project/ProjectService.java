@@ -1,6 +1,5 @@
 package com.gestion_obras.services.project;
 
-import com.gestion_obras.models.dtos.project.ProjectDto;
 import com.gestion_obras.models.entities.Project;
 
 import java.util.List;

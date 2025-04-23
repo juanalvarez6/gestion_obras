@@ -25,9 +25,8 @@ public class Task {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "assigned_to")
-    private User assignedTo;
+    @JoinColumn(name = "assigned_to", nullable = false)
+    private Integer assignedTo;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, columnDefinition = "ENUM('PENDIENTE', 'EN_PROGRESO', 'COMPLETADA', 'CANCELADA')")
