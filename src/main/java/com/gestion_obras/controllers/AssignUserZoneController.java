@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/assign_user_zones")
@@ -43,18 +42,16 @@ public class AssignUserZoneController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AssignUserZone> updateAssignUserZone(@PathVariable Long id, @Valid @RequestBody AssignUserZoneDto updatedAssignUserZone) {
-        Optional<AssignUserZone> existingAssignUserZone = this.assignUserZoneServiceManager.findById(id);
+    public ResponseEntity<AssignUserZone> update(@PathVariable Long id, @Valid @RequestBody AssignUserZoneDto updatedAssignUserZone) {
+        return this.assignUserZoneServiceManager.findById(id)
+                .map(existingAssignUserZone -> {;
+                    AssignUserZone assignUserZone = mapToAssignUserZone(updatedAssignUserZone);
+                    assignUserZone.setId(id);
+                    AssignUserZone savedAssignUserZone = this.assignUserZoneServiceManager.save(assignUserZone);
+                    return ResponseEntity.ok(savedAssignUserZone);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
 
-        if (existingAssignUserZone.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        AssignUserZone assignUserZone = mapToAssignUserZone(updatedAssignUserZone);
-        assignUserZone.setId(id);
-
-        AssignUserZone savedAssignUserZone = this.assignUserZoneServiceManager.save(assignUserZone);
-        return ResponseEntity.ok(savedAssignUserZone);
     }
 
     @DeleteMapping("/{id}")

@@ -45,17 +45,14 @@ public class InventoryController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Inventory> update(@PathVariable Long id, @Valid @RequestBody InventoryDto updatedInventory) {
-        Optional<Inventory> existingInventory = this.inventoryServiceManager.findById(id);
-
-        if (existingInventory.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Inventory inventory = this.mapToInventory(updatedInventory);
-        inventory.setId(id);
-
-        Inventory savedInventory = this.inventoryServiceManager.save(inventory);
-        return ResponseEntity.ok(savedInventory);
+        return this.inventoryServiceManager.findById(id)
+                .map(existingInventory -> {
+                    Inventory inventory = mapToInventory(updatedInventory);
+                    inventory.setId(id);
+                    Inventory savedInventory = this.inventoryServiceManager.save(inventory);
+                    return ResponseEntity.ok(savedInventory);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")

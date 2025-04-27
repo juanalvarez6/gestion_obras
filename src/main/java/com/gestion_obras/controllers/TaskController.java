@@ -42,17 +42,14 @@ public class TaskController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Task> update(@PathVariable Long id, @Valid @RequestBody TaskDto updatedTask) {
-        Optional<Task> existingTask =  this.taskServiceManager.findById(id);
-
-        if (existingTask.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Task task = mapToTask(updatedTask);
-        task.setId(id);
-
-        Task savedProject = this.taskServiceManager.save(task);
-        return ResponseEntity.ok(savedProject);
+        return this.taskServiceManager.findById(id)
+                .map(existingTask -> {
+                    Task task = mapToTask(updatedTask);
+                    task.setId(id);
+                    Task savedTask = this.taskServiceManager.save(task);
+                    return ResponseEntity.ok(savedTask);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")

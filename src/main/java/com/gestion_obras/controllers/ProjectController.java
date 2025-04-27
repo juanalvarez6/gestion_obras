@@ -41,18 +41,14 @@ public class ProjectController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Project> update(@PathVariable Long id, @Valid @RequestBody ProjectDto updatedProject) {
-        Optional<Project> existingProject =  this.projectServiceManager.findById(id);
-
-        if (existingProject.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Project project = mapToProject(updatedProject);
-        project.setId(id);
-
-        Project savedProject = this.projectServiceManager.save(project);
-
-        return ResponseEntity.ok(savedProject);
+        return this.projectServiceManager.findById(id)
+                .map(existingProject -> {
+                    Project project = mapToProject(updatedProject);
+                    project.setId(id);
+                    Project savedProject = this.projectServiceManager.save(project);
+                    return ResponseEntity.ok(savedProject);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")

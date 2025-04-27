@@ -41,17 +41,14 @@ public class MaterialController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Material> update(@PathVariable Long id, @Valid @RequestBody MaterialDto updatedMaterial){
-        Optional<Material> existingMaterial = this.materialServiceManager.findById(id);
-
-        if(existingMaterial.isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
-
-        Material material = this.mapToMaterial(updatedMaterial);
-        material.setId(id);
-
-        Material savedMaterial = this.materialServiceManager.save(material);
-        return ResponseEntity.ok(savedMaterial);
+        return this.materialServiceManager.findById(id)
+                .map(existingMaterial -> {
+                    Material material = mapToMaterial(updatedMaterial);
+                    material.setId(id);
+                    Material savedMaterial = this.materialServiceManager.save(material);
+                    return ResponseEntity.ok(savedMaterial);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")

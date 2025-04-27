@@ -41,17 +41,14 @@ public class WorkZoneController {
 
     @PutMapping("/{id}")
     public ResponseEntity<WorkZone> update(@PathVariable Long id, @Valid @RequestBody WorkZoneDto updatedWorkZone) {
-        Optional<WorkZone> existingWorkZone =  this.workZoneServiceManager.findById(id);
-
-        if (existingWorkZone.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        WorkZone workZone = mapToZone(updatedWorkZone);
-        workZone.setId(id);
-
-        WorkZone savedWorkZone = this.workZoneServiceManager.save(workZone);
-        return ResponseEntity.ok(savedWorkZone);
+        return this.workZoneServiceManager.findById(id)
+                .map(existingWorkZone -> {
+                    WorkZone zone = mapToZone(updatedWorkZone);
+                    zone.setId(id);
+                    WorkZone savedWorkZone = this.workZoneServiceManager.save(zone);
+                    return ResponseEntity.ok(savedWorkZone);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
