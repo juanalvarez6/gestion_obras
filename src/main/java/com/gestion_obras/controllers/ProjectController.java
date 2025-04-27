@@ -3,6 +3,7 @@ package com.gestion_obras.controllers;
 import com.gestion_obras.models.dtos.project.ProjectDto;
 import com.gestion_obras.models.entities.Project;
 import com.gestion_obras.services.sevicesmanager.ProjectServiceManager;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/projects")
+@Tag(name = "Proyectos", description = "Endpoint para la gestión de proyectos")
 public class ProjectController {
 
     @Autowired

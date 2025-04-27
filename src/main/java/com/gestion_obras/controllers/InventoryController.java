@@ -5,6 +5,7 @@ import com.gestion_obras.models.entities.Inventory;
 import com.gestion_obras.models.entities.Material;
 import com.gestion_obras.models.entities.Project;
 import com.gestion_obras.services.sevicesmanager.InventoryServiceManager;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,10 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/inventories")
+@Tag(name = "Inventarios", description = "Endpoint para la gestión de inventarios")
 public class InventoryController {
 
     @Autowired

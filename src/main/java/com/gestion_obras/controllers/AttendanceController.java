@@ -4,6 +4,7 @@ import com.gestion_obras.models.dtos.attendance.AttendanceDto;
 import com.gestion_obras.models.entities.Attendance;
 import com.gestion_obras.models.entities.WorkZone;
 import com.gestion_obras.services.sevicesmanager.AttendanceServiceManager;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/attendances")
+@Tag(name = "Asistencias", description = "Endpoint para la gestión de asistencias")
 public class AttendanceController {
 
     @Autowired

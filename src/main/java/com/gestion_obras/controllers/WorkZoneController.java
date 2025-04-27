@@ -4,6 +4,7 @@ import com.gestion_obras.models.dtos.workzone.WorkZoneDto;
 import com.gestion_obras.models.entities.Project;
 import com.gestion_obras.models.entities.WorkZone;
 import com.gestion_obras.services.sevicesmanager.WorkZoneServiceManager;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/zones")
+@Tag(name = "Zonas", description = "Endpoint para la gestión de zonas de trabajo")
 public class WorkZoneController {
 
     @Autowired

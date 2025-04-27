@@ -4,6 +4,7 @@ import com.gestion_obras.models.dtos.assignuserzone.AssignUserZoneDto;
 import com.gestion_obras.models.entities.AssignUserZone;
 import com.gestion_obras.models.entities.WorkZone;
 import com.gestion_obras.services.sevicesmanager.AssignUserZoneServiceManager;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/assign_user_zones")
+@Tag(name = "Asignación de Zonas", description = "Endpoint para asignaciones de usuarios a zonas")
 public class AssignUserZoneController {
 
     @Autowired

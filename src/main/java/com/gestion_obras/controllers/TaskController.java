@@ -4,6 +4,7 @@ import com.gestion_obras.models.dtos.task.TaskDto;
 import com.gestion_obras.models.entities.Task;
 import com.gestion_obras.models.entities.WorkZone;
 import com.gestion_obras.services.sevicesmanager.TaskServiceManager;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,10 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/task")
+@Tag(name = "Tareas", description = "Endpoint para la gestión de tareas")
 public class TaskController {
 
     @Autowired

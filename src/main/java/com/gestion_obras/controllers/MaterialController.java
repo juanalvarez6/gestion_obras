@@ -3,6 +3,7 @@ package com.gestion_obras.controllers;
 import com.gestion_obras.models.dtos.material.MaterialDto;
 import com.gestion_obras.models.entities.Material;
 import com.gestion_obras.services.sevicesmanager.MaterialServiceManager;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,10 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/materials")
+@Tag(name = "Materiales", description = "Endpoint para la gestión de materiales")
 public class MaterialController {
 
     @Autowired

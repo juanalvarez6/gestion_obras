@@ -6,6 +6,7 @@ import com.gestion_obras.models.entities.MaterialRequest;
 import com.gestion_obras.models.entities.Project;
 import com.gestion_obras.services.sevicesmanager.MaterialRequestServiceManager;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/material-requests")
+@Tag(name = "Solicitud de materiales", description = "Endpoint para la gestión de solicitudes de materiales")
 public class MaterialRequestController {
 
     @Autowired
