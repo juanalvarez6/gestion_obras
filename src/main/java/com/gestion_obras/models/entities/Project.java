@@ -1,6 +1,8 @@
 package com.gestion_obras.models.entities;
 
+import com.gestion_obras.models.enums.StatusProject;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -38,19 +40,14 @@ public class Project {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, columnDefinition = "ENUM('EN_PROGRESO', 'FINALIZADO', 'SUSPENDIDO')")
-    private Status status;
+    private StatusProject status;
 
+    @Setter(AccessLevel.NONE)
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
-    }
-
-    public enum Status {
-        EN_PROGRESO,
-        FINALIZADO,
-        SUSPENDIDO
     }
 }

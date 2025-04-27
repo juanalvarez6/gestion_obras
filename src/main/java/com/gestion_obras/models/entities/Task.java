@@ -1,5 +1,6 @@
 package com.gestion_obras.models.entities;
 
+import com.gestion_obras.models.enums.StatusTask;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,19 +27,13 @@ public class Task {
     private String description;
 
     @JoinColumn(name = "assigned_to", nullable = false)
-    private Integer assignedTo;
+    private String userId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, columnDefinition = "ENUM('PENDIENTE', 'EN_PROGRESO', 'COMPLETADA', 'CANCELADA')")
-    private Status status;
+    private StatusTask status;
 
     @Column(name = "evidence", columnDefinition = "TEXT")
     private String evidence;
 
-    public enum Status {
-        PENDIENTE,
-        EN_PROGRESO,
-        COMPLETADA,
-        CANCELADA
-    }
 }

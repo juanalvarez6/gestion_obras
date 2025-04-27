@@ -1,7 +1,9 @@
 package com.gestion_obras.controllers;
 
+import com.gestion_obras.models.dtos.workzone.WorkZoneDto;
+import com.gestion_obras.models.entities.Project;
 import com.gestion_obras.models.entities.WorkZone;
-import com.gestion_obras.services.workzone.WorkZoneServiceManager;
+import com.gestion_obras.services.sevicesmanager.WorkZoneServiceManager;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/zones")
+@RequestMapping("/zones")
 public class WorkZoneController {
 
     @Autowired
@@ -20,49 +22,67 @@ public class WorkZoneController {
 
     @GetMapping
     @Transactional(readOnly = true)
-    public List<WorkZone> findAllWorkZone() {
+    public List<WorkZone> findAll() {
         return this.workZoneServiceManager.findAll();
     }
 
     @GetMapping("/{id}")
     @Transactional(readOnly = true)
-    public ResponseEntity<WorkZone> getByIdWorkZone(@PathVariable Long id){
+    public ResponseEntity<WorkZone> getById(@PathVariable Long id){
         return this.workZoneServiceManager.findById(id).map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public WorkZone saveWorkZone(@RequestBody WorkZone workZone) {
-        return this.workZoneServiceManager.save(workZone);
+    public WorkZone create(@RequestBody WorkZoneDto workZone) {
+        WorkZone zoneNew = this.mapToZone(workZone);
+        return this.workZoneServiceManager.save(zoneNew);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<WorkZone> updateWorkZone(@PathVariable Long id, @Valid @RequestBody WorkZone updatedWorkZone) {
+    public ResponseEntity<WorkZone> update(@PathVariable Long id, @Valid @RequestBody WorkZoneDto updatedWorkZone) {
         Optional<WorkZone> existingWorkZone =  this.workZoneServiceManager.findById(id);
 
         if (existingWorkZone.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
-        WorkZone workZone = existingWorkZone.get();
-
-
-        if (updatedWorkZone.getName() != null) workZone.setName(updatedWorkZone.getName());
-        if (updatedWorkZone.getDescription() != null) workZone.setDescription(updatedWorkZone.getDescription());
-        if (updatedWorkZone.getLatitude() != null) workZone.setLatitude(updatedWorkZone.getLatitude());
-        if (updatedWorkZone.getLongitude() != null) workZone.setLongitude(updatedWorkZone.getLongitude());
-        if (updatedWorkZone.getStatus() != null) workZone.setStatus(updatedWorkZone.getStatus());
-        if (updatedWorkZone.getProject() != null) workZone.setProject(updatedWorkZone.getProject());
-
+        WorkZone workZone = mapToZone(updatedWorkZone);
+        workZone.setId(id);
 
         WorkZone savedWorkZone = this.workZoneServiceManager.save(workZone);
         return ResponseEntity.ok(savedWorkZone);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteWorkZone(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         boolean deleted = workZoneServiceManager.delete(id);
         return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
+
+    private WorkZone mapToZone(WorkZoneDto workZoneDto) {
+        WorkZone workZone = new WorkZone();
+        if (workZoneDto.getProjectId() != null) {
+            Project project = new Project();
+            project.setId(workZoneDto.getProjectId());
+            workZone.setProject(project);
+        }
+        if (workZoneDto.getName() != null) {
+            workZone.setName(workZoneDto.getName());
+        }
+        if (workZoneDto.getDescription() != null) {
+            workZone.setDescription(workZoneDto.getDescription());
+        }
+        if (workZoneDto.getLatitude() != null) {
+            workZone.setLatitude(workZoneDto.getLatitude());
+        }
+        if (workZoneDto.getLongitude() != null) {
+            workZone.setLongitude(workZoneDto.getLongitude());
+        }
+        if (workZoneDto.getStatus() != null) {
+            workZone.setStatus(workZoneDto.getStatus());
+        }
+        return workZone;
     }
 
 }

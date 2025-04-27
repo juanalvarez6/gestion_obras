@@ -1,17 +1,15 @@
 package com.gestion_obras.models.dtos.workzone;
 
+import com.gestion_obras.models.enums.StatusWorkZone;
 import lombok.Getter;
-import lombok.Setter;
 import java.math.BigDecimal;
 
 @Getter
-@Setter
 public class WorkZoneDto {
-    private Integer id;
-    private Integer projectId;
-    private String projectName;
+    private Long projectId;
     private String name;
     private String description;
     private BigDecimal latitude;
     private BigDecimal longitude;
+    private StatusWorkZone status;
 }

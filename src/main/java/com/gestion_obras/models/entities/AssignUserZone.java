@@ -7,7 +7,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "assign_user_zones")
+@Table(name = "assign_user_zones", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"user_id", "zone_id"}),
+        @UniqueConstraint(columnNames = {"user_id"})
+})
 public class AssignUserZone {
 
     @Id
@@ -15,7 +18,7 @@ public class AssignUserZone {
     private Long id;
 
     @JoinColumn(name = "user_id", nullable = false)
-    private Integer userId;
+    private String userId;
 
     @ManyToOne
     @JoinColumn(name = "zone_id", nullable = false)

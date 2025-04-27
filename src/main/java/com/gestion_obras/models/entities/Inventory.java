@@ -7,7 +7,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "inventories")
+@Table(name = "inventories", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"project_id", "material_id"})
+})
 public class Inventory {
 
     @Id
@@ -15,13 +17,13 @@ public class Inventory {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "proyecto_id", nullable = false)
-    private Project proyecto;
+    @JoinColumn(name = "project_id", nullable = false)
+    private Project project;
 
     @ManyToOne
     @JoinColumn(name = "material_id", nullable = false)
     private Material material;
 
-    @Column(name = "cantidad_disponible", nullable = false, columnDefinition = "INT DEFAULT 0")
-    private int cantidadDisponible;
+    @Column(name = "available_quantity", nullable = false, columnDefinition = "INT DEFAULT 0")
+    private int AvailableQuantity;
 }

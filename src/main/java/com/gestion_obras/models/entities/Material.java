@@ -14,9 +14,9 @@ public class Material {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nombre", nullable = false, length = 150)
-    private String nombre;
+    @Column(name = "name", nullable = false, length = 150)
+    private String name;
 
-    @Column(name = "unidad", length = 50)
-    private String unidad;
+    @Column(name = "unit", length = 50)
+    private String unit;
 }

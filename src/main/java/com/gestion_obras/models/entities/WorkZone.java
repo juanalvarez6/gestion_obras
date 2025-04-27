@@ -1,5 +1,6 @@
 package com.gestion_obras.models.entities;
 
+import com.gestion_obras.models.enums.StatusWorkZone;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,10 +35,5 @@ public class WorkZone {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, columnDefinition = "ENUM('EN_PROGRESO', 'FINALIZADA')")
-    private Status status;
-
-    public enum Status {
-        EN_PROGRESO,
-        FINALIZADA
-    }
+    private StatusWorkZone status;
 }

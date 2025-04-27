@@ -1,7 +1,8 @@
 package com.gestion_obras.controllers;
 
+import com.gestion_obras.models.dtos.project.ProjectDto;
 import com.gestion_obras.models.entities.Project;
-import com.gestion_obras.services.project.ProjectServiceManager;
+import com.gestion_obras.services.sevicesmanager.ProjectServiceManager;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,54 +13,79 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/projects")
+@RequestMapping("/projects")
 public class ProjectController {
 
     @Autowired
-    private ProjectServiceManager projectServiceManager;
+    protected ProjectServiceManager projectServiceManager;
 
     @GetMapping
     @Transactional(readOnly = true)
-    public List<Project> findAllProjects() {
-        return this.projectServiceManager.findAll();
-    }
-
-    @PostMapping
-    public Project saveProject(@RequestBody Project project) {
-        return this.projectServiceManager.save(project);
+    public List<Project> findAll() {
+        return projectServiceManager.findAll();
     }
 
     @GetMapping("/{id}")
     @Transactional(readOnly = true)
-    public ResponseEntity<Project> getByIdProject(@PathVariable Long id){
-        return this.projectServiceManager.findById(id)
+    public ResponseEntity<Project> findById(@PathVariable Long id) {
+        return projectServiceManager.findById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @PostMapping
+    public Project create(@RequestBody ProjectDto project) {
+        Project projectNew = this.mapToProject(project);
+        return projectServiceManager.save(projectNew);
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<Project> updateProject(@PathVariable Long id, @Valid @RequestBody Project updatedProject) {
+    public ResponseEntity<Project> update(@PathVariable Long id, @Valid @RequestBody ProjectDto updatedProject) {
         Optional<Project> existingProject =  this.projectServiceManager.findById(id);
 
         if (existingProject.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
-        Project project = existingProject.get();
-
-        if (updatedProject.getName() != null) project.setName(updatedProject.getName());
-        if (updatedProject.getDescription() != null) project.setDescription(updatedProject.getDescription());
-        if (updatedProject.getStartDate() != null) project.setStartDate(updatedProject.getStartDate());
-        if (updatedProject.getEndDate() != null) project.setEndDate(updatedProject.getEndDate());
-        if (updatedProject.getStatus() != null) project.setStatus(updatedProject.getStatus());
+        Project project = mapToProject(updatedProject);
+        project.setId(id);
 
         Project savedProject = this.projectServiceManager.save(project);
+
         return ResponseEntity.ok(savedProject);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
+    public ResponseEntity<Project> delete(@PathVariable Long id) {
         boolean deleted = projectServiceManager.delete(id);
-        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        return deleted ? ResponseEntity.noContent().build(): ResponseEntity.notFound().build();
     }
+
+    private Project mapToProject(ProjectDto projectDto) {
+        Project project = new Project();
+        project.setName(projectDto.getName());
+        if(projectDto.getName() != null) {
+            project.setName(projectDto.getName());
+        }
+        if(projectDto.getDescription() != null) {
+            project.setDescription(projectDto.getDescription());
+        }
+        if(projectDto.getLatitude() != null) {
+            project.setLatitude(projectDto.getLatitude());
+        }
+        if(projectDto.getLongitude() != null) {
+            project.setLongitude(projectDto.getLongitude());
+        }
+        if(projectDto.getStartDate() != null)
+            project.setStartDate(projectDto.getStartDate());
+
+        if(projectDto.getEndDate() != null)
+            project.setEndDate(projectDto.getEndDate());
+
+        if(projectDto.getStatus() != null)
+            project.setStatus(projectDto.getStatus());
+
+        return project;
+    }
+
 }
