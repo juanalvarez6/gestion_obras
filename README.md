@@ -44,6 +44,8 @@ spring.jpa.database-platform=org.hibernate.dialect.MySQL8Dialect
 3. **Build and run**
 ```sh
    mvn clean install
+```
+```sh
    mvn spring-boot:run
 ```
 
