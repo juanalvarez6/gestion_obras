@@ -4,11 +4,13 @@ import com.gestion_obras.models.dtos.materialrequest.MaterialRequestDto;
 import com.gestion_obras.models.entities.Material;
 import com.gestion_obras.models.entities.MaterialRequest;
 import com.gestion_obras.models.entities.Project;
+import com.gestion_obras.models.enums.StatusMaterialRequest;
 import com.gestion_obras.services.sevicesmanager.MaterialRequestServiceManager;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -44,9 +46,13 @@ public class MaterialRequestController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MaterialRequest> update(@PathVariable Long id, @Valid @RequestBody MaterialRequestDto updatedMaterialRequest) {
+    public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody MaterialRequestDto updatedMaterialRequest) {
         return this.materialRequestServiceManager.findById(id)
                 .map(existingMaterialRequest -> {
+                    if (!existingMaterialRequest.getStatus().equals(StatusMaterialRequest.PENDIENTE)) {
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                                .body("La solicitud de material no se puede actualizar porque su estado no es PENDIENTE.");
+                    }
                     MaterialRequest materialRequest = mapToMaterialRequest(updatedMaterialRequest);
                     materialRequest.setId(id);
                     MaterialRequest savedMaterialRequest = this.materialRequestServiceManager.save(materialRequest);
