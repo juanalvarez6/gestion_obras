@@ -1,5 +1,6 @@
 package com.gestion_obras.models.entities;
 
+import com.gestion_obras.models.enums.PriorityTask;
 import com.gestion_obras.models.enums.StatusTask;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -30,8 +31,12 @@ public class Task {
     private String userId;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, columnDefinition = "ENUM('PENDIENTE', 'EN_PROGRESO', 'COMPLETADA', 'CANCELADA')")
+    @Column(name = "status", nullable = false, columnDefinition = "ENUM('PENDIENTE', 'EN_PROGRESO', 'COMPLETADA')")
     private StatusTask status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "priority", nullable = false, columnDefinition = "ENUM('ALTA', 'MEDIA', 'BAJA')")
+    private PriorityTask priorityTask;
 
     @Column(name = "evidence", columnDefinition = "TEXT")
     private String evidence;

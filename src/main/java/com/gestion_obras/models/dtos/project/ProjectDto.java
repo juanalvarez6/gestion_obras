@@ -14,5 +14,4 @@ public class ProjectDto {
     private BigDecimal longitude;
     private LocalDate startDate;
     private LocalDate endDate;
-    private StatusProject status;
 }

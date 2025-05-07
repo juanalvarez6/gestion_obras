@@ -42,6 +42,7 @@ public class MaterialRequestController {
     @PostMapping
     public MaterialRequest create(@RequestBody MaterialRequestDto materialRequest) {
         MaterialRequest materialRequestNew = this.mapToMaterialRequest(materialRequest);
+        materialRequestNew.setStatus(StatusMaterialRequest.PENDIENTE);
         return this.materialRequestServiceManager.save(materialRequestNew);
     }
 
@@ -90,8 +91,8 @@ public class MaterialRequestController {
         if(materialRequestDto.getComments() != null)
             materialRequest.setComments(materialRequestDto.getComments());
 
-        if(materialRequestDto.getStatus() != null)
-            materialRequest.setStatus(materialRequestDto.getStatus());
+        if(materialRequestDto.getMaterialQuality() != null)
+            materialRequest.setMaterialQuality(materialRequestDto.getMaterialQuality());
 
         return materialRequest;
     }

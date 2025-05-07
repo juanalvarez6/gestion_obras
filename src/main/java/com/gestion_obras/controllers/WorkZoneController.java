@@ -3,6 +3,7 @@ package com.gestion_obras.controllers;
 import com.gestion_obras.models.dtos.workzone.WorkZoneDto;
 import com.gestion_obras.models.entities.Project;
 import com.gestion_obras.models.entities.WorkZone;
+import com.gestion_obras.models.enums.StatusWorkZone;
 import com.gestion_obras.services.sevicesmanager.WorkZoneServiceManager;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -38,6 +39,7 @@ public class WorkZoneController {
     @PostMapping
     public WorkZone create(@RequestBody WorkZoneDto workZone) {
         WorkZone zoneNew = this.mapToZone(workZone);
+        zoneNew.setStatus(StatusWorkZone.EN_PROGRESO);
         return this.workZoneServiceManager.save(zoneNew);
     }
 
@@ -77,9 +79,6 @@ public class WorkZoneController {
         }
         if (workZoneDto.getLongitude() != null) {
             workZone.setLongitude(workZoneDto.getLongitude());
-        }
-        if (workZoneDto.getStatus() != null) {
-            workZone.setStatus(workZoneDto.getStatus());
         }
         return workZone;
     }

@@ -1,10 +1,12 @@
 package com.gestion_obras.models.entities;
 
+import com.gestion_obras.models.enums.MaterialQuality;
 import com.gestion_obras.models.enums.StatusMaterialRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -34,8 +36,15 @@ public class MaterialRequest {
     @Column(name = "request_date", updatable = false)
     private LocalDateTime requestDate;
 
+    @Column(name = "delivery_date", nullable = false)
+    private LocalDate deliveryDate;
+
     @Column(name = "comments", nullable = false)
     private String comments;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "material_quality", nullable = false, columnDefinition = "ENUM('ALTA', 'MEDIA', 'BAJA')")
+    private MaterialQuality materialQuality;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, columnDefinition = "ENUM('PENDIENTE', 'APROBADA', 'RECHAZADA')")

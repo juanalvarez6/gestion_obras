@@ -11,5 +11,4 @@ public class WorkZoneDto {
     private String description;
     private BigDecimal latitude;
     private BigDecimal longitude;
-    private StatusWorkZone status;
 }

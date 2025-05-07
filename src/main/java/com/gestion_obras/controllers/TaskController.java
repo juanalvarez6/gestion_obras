@@ -3,6 +3,7 @@ package com.gestion_obras.controllers;
 import com.gestion_obras.models.dtos.task.TaskDto;
 import com.gestion_obras.models.entities.Task;
 import com.gestion_obras.models.entities.WorkZone;
+import com.gestion_obras.models.enums.StatusTask;
 import com.gestion_obras.services.sevicesmanager.TaskServiceManager;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -38,6 +39,7 @@ public class TaskController {
     @PostMapping
     public Task create(@RequestBody TaskDto task) {
         Task taskNew = this.mapToTask(task);
+        taskNew.setStatus(StatusTask.PENDIENTE);
         return this.taskServiceManager.save(taskNew);
     }
 
@@ -74,9 +76,6 @@ public class TaskController {
         }
         if (taskDto.getUserId() != null) {
             task.setUserId(taskDto.getUserId());
-        }
-        if (taskDto.getStatus() != null) {
-            task.setStatus(taskDto.getStatus());
         }
         if (taskDto.getEvidence() != null) {
             task.setEvidence(taskDto.getEvidence());

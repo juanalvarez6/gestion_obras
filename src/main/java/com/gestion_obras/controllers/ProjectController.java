@@ -2,6 +2,7 @@ package com.gestion_obras.controllers;
 
 import com.gestion_obras.models.dtos.project.ProjectDto;
 import com.gestion_obras.models.entities.Project;
+import com.gestion_obras.models.enums.StatusProject;
 import com.gestion_obras.services.sevicesmanager.ProjectServiceManager;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -11,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/projects")
@@ -38,6 +38,7 @@ public class ProjectController {
     @PostMapping
     public Project create(@RequestBody ProjectDto project) {
         Project projectNew = this.mapToProject(project);
+        projectNew.setStatus(StatusProject.EN_PROGRESO);
         return projectServiceManager.save(projectNew);
     }
 
@@ -79,9 +80,6 @@ public class ProjectController {
 
         if(projectDto.getEndDate() != null)
             project.setEndDate(projectDto.getEndDate());
-
-        if(projectDto.getStatus() != null)
-            project.setStatus(projectDto.getStatus());
 
         return project;
     }

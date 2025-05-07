@@ -1,5 +1,6 @@
 package com.gestion_obras.models.dtos.task;
 
+import com.gestion_obras.models.enums.PriorityTask;
 import com.gestion_obras.models.enums.StatusTask;
 import lombok.Getter;
 
@@ -9,6 +10,6 @@ public class TaskDto {
     private String name;
     private String description;
     private String UserId;
-    private StatusTask status;
+    private PriorityTask priorityTask;
     private String evidence;
 }
