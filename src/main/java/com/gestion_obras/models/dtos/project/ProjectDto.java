@@ -1,6 +1,5 @@
 package com.gestion_obras.models.dtos.project;
 
-import com.gestion_obras.models.enums.StatusProject;
 import lombok.Getter;
 
 import java.math.BigDecimal;
@@ -12,6 +11,8 @@ public class ProjectDto {
     private String description;
     private BigDecimal latitude;
     private BigDecimal longitude;
+    private Integer locationRange;
     private LocalDate startDate;
     private LocalDate endDate;
+    private String userId;
 }

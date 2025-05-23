@@ -4,7 +4,6 @@ import com.gestion_obras.models.enums.StatusWorkZone;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -26,12 +25,6 @@ public class WorkZone {
 
     @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     private String description;
-
-    @Column(name = "latitude", nullable = false, precision = 10, scale = 8)
-    private BigDecimal latitude;
-
-    @Column(name = "longitude", nullable = false, precision = 11, scale = 8)
-    private BigDecimal longitude;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, columnDefinition = "ENUM('EN_PROGRESO', 'FINALIZADA')")

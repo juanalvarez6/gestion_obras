@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,57 +23,103 @@ public class ProjectController {
     @Autowired
     protected ProjectServiceManager projectServiceManager;
 
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'ADMINISTRADOR')")
     @Transactional(readOnly = true)
     public List<Project> findAll() {
-        return projectServiceManager.findAll();
+        return this.projectServiceManager.findAll();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'ADMINISTRADOR')")
     @Transactional(readOnly = true)
     public ResponseEntity<Project> findById(@PathVariable Long id) {
-        return projectServiceManager.findById(id)
+        return this.projectServiceManager.findById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
     public Project create(@RequestBody ProjectDto project) {
         Project projectNew = this.mapToProject(project);
         projectNew.setStatus(StatusProject.EN_PROGRESO);
-        return projectServiceManager.save(projectNew);
+
+        Project saveProject = this.projectServiceManager.save(projectNew);
+
+        messagingTemplate.convertAndSend("/topic/projects", "refresh");
+
+        return saveProject;
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Project> update(@PathVariable Long id, @Valid @RequestBody ProjectDto updatedProject) {
+    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
+    public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody ProjectDto updatedProject) {
         return this.projectServiceManager.findById(id)
                 .map(existingProject -> {
+                    if (existingProject.getStatus() == StatusProject.FINALIZADO) {
+                        return ResponseEntity.badRequest().build();
+                    }
                     Project project = mapToProject(updatedProject);
-                    project.setId(id);
+                    project.setId(existingProject.getId());
+                    project.setStatus(existingProject.getStatus());
                     Project savedProject = this.projectServiceManager.save(project);
+                    messagingTemplate.convertAndSend("/topic/projects", "refresh");
                     return ResponseEntity.ok(savedProject);
                 })
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @PutMapping("/{id}/status")
+    @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'ADMINISTRADOR')")
+    public ResponseEntity<Void> updateProjectStatus(@PathVariable Long id, @RequestParam StatusProject status) {
+        int rowsAffected = this.projectServiceManager.updateProjectStatus(id, status);
+        if(rowsAffected > 0){
+            messagingTemplate.convertAndSend("/topic/projects", "refresh");
+            return ResponseEntity.noContent().build();
+        }else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Project> delete(@PathVariable Long id) {
-        boolean deleted = projectServiceManager.delete(id);
-        return deleted ? ResponseEntity.noContent().build(): ResponseEntity.notFound().build();
+    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        return this.projectServiceManager.findById(id)
+                .map(existingProject -> {
+                    if (existingProject.getStatus() == StatusProject.FINALIZADO) {
+                        return ResponseEntity.badRequest().build();
+                    }
+                    boolean deleted = this.projectServiceManager.delete(id);
+
+                    if(deleted){
+                        messagingTemplate.convertAndSend("/topic/projects", "refresh");
+                        return ResponseEntity.noContent().build();
+                    }else {
+                        return ResponseEntity.notFound().build();
+                    }
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     private Project mapToProject(ProjectDto projectDto) {
         Project project = new Project();
         project.setName(projectDto.getName());
-        if(projectDto.getName() != null) {
+        if(projectDto.getName() != null)
             project.setName(projectDto.getName());
-        }
-        if(projectDto.getDescription() != null) {
+
+        if(projectDto.getDescription() != null)
             project.setDescription(projectDto.getDescription());
-        }
-        if(projectDto.getLatitude() != null) {
+
+        if(projectDto.getLatitude() != null)
             project.setLatitude(projectDto.getLatitude());
-        }
+
+        if(projectDto.getLocationRange() != null)
+            project.setLocationRange(projectDto.getLocationRange());
+
         if(projectDto.getLongitude() != null) {
             project.setLongitude(projectDto.getLongitude());
         }
@@ -80,6 +128,9 @@ public class ProjectController {
 
         if(projectDto.getEndDate() != null)
             project.setEndDate(projectDto.getEndDate());
+
+        if(projectDto.getUserId() != null)
+            project.setUserId(projectDto.getUserId());
 
         return project;
     }

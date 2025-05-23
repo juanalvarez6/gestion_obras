@@ -35,8 +35,14 @@ public class Project {
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
+    @Column(name = "location_range", nullable = false)
+    private Integer locationRange;
+
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
+
+    @Column(name = "user_id", nullable = false)
+    private String userId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, columnDefinition = "ENUM('EN_PROGRESO', 'FINALIZADO', 'SUSPENDIDO')")

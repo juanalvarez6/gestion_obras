@@ -3,17 +3,21 @@ package com.gestion_obras.controllers;
 import com.gestion_obras.models.dtos.workzone.WorkZoneDto;
 import com.gestion_obras.models.entities.Project;
 import com.gestion_obras.models.entities.WorkZone;
+import com.gestion_obras.models.enums.StatusProject;
 import com.gestion_obras.models.enums.StatusWorkZone;
+import com.gestion_obras.services.sevicesmanager.ProjectServiceManager;
 import com.gestion_obras.services.sevicesmanager.WorkZoneServiceManager;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/zones")
@@ -22,6 +26,12 @@ public class WorkZoneController {
 
     @Autowired
     private WorkZoneServiceManager workZoneServiceManager;
+
+    @Autowired
+    private ProjectServiceManager projectServiceManager;
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     @GetMapping
     @Transactional(readOnly = true)
@@ -37,10 +47,33 @@ public class WorkZoneController {
     }
 
     @PostMapping
-    public WorkZone create(@RequestBody WorkZoneDto workZone) {
-        WorkZone zoneNew = this.mapToZone(workZone);
-        zoneNew.setStatus(StatusWorkZone.EN_PROGRESO);
-        return this.workZoneServiceManager.save(zoneNew);
+    public ResponseEntity<?> create(@RequestBody WorkZoneDto workZone) {
+        return this.projectServiceManager.findById(workZone.getProjectId())
+                .map(existingProject -> {
+                    if (existingProject.getStatus() != StatusProject.EN_PROGRESO) {
+                        return ResponseEntity.badRequest().body(
+                                Map.of(
+                                        "code", 400,
+                                        "message", "No se puede crear zona para un proyecto FINALIZADO o SUSPENDIDO",
+                                        "status", "error"
+
+                                )
+                        );
+                    }
+                    WorkZone zoneNew = this.mapToZone(workZone);
+                    zoneNew.setStatus(StatusWorkZone.EN_PROGRESO);
+                    WorkZone savedWorkZone = this.workZoneServiceManager.save(zoneNew);
+
+                    messagingTemplate.convertAndSend("/topic/zones", "refresh");
+
+                    return ResponseEntity.ok(savedWorkZone);
+                }).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                        Map.of(
+                                "code", 404,
+                                "message", "No se encontró proyecto seleccionado",
+                                "status", "error"
+                        )
+                ));
     }
 
     @PutMapping("/{id}")
@@ -49,16 +82,36 @@ public class WorkZoneController {
                 .map(existingWorkZone -> {
                     WorkZone zone = mapToZone(updatedWorkZone);
                     zone.setId(id);
+                    zone.setStatus(existingWorkZone.getStatus());
                     WorkZone savedWorkZone = this.workZoneServiceManager.save(zone);
+
+                    messagingTemplate.convertAndSend("/topic/zones", "refresh");
+
                     return ResponseEntity.ok(savedWorkZone);
                 })
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @PutMapping("/{id}/status")
+    public ResponseEntity<Void> updateWorkZoneStatus(@PathVariable Long id, @RequestParam StatusWorkZone status){
+        int rowsAffected = this.workZoneServiceManager.updateWorkZoneStatus(id, status);
+        if(rowsAffected > 0){
+            messagingTemplate.convertAndSend("/topic/zones", "refresh");
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         boolean deleted = workZoneServiceManager.delete(id);
-        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        if(deleted) {
+            messagingTemplate.convertAndSend("/topic/zones", "refresh");
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     private WorkZone mapToZone(WorkZoneDto workZoneDto) {
@@ -73,12 +126,6 @@ public class WorkZoneController {
         }
         if (workZoneDto.getDescription() != null) {
             workZone.setDescription(workZoneDto.getDescription());
-        }
-        if (workZoneDto.getLatitude() != null) {
-            workZone.setLatitude(workZoneDto.getLatitude());
-        }
-        if (workZoneDto.getLongitude() != null) {
-            workZone.setLongitude(workZoneDto.getLongitude());
         }
         return workZone;
     }
