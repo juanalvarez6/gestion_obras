@@ -7,6 +7,7 @@ import com.gestion_obras.services.GenericServiceManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,6 +21,11 @@ public class ProjectServiceManager extends GenericServiceManager<Project, Projec
     @Transactional(readOnly = true)
     public Optional<StatusProject> findStatusById(Long id){
         return repository.findStatusById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Project> findByUserId(String id) {
+        return repository.findByUserId(id);
     }
 
 }

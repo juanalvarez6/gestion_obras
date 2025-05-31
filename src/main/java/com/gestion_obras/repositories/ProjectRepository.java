@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ProjectRepository extends JpaRepository<Project, Long> {
@@ -19,4 +20,8 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     @Transactional(readOnly = true)
     @Query("SELECT p.status FROM Project p WHERE p.id = :id")
     Optional<StatusProject> findStatusById(@Param("id") Long id);
+
+    @Transactional(readOnly = true)
+    @Query("SELECT p FROM Project p WHERE p.userId = :id ORDER BY p.createdAt DESC")
+    List<Project> findByUserId(@Param("id") String userId);
 }

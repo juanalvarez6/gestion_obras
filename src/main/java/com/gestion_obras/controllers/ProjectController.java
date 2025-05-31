@@ -1,6 +1,7 @@
 package com.gestion_obras.controllers;
 
 import com.gestion_obras.models.dtos.project.ProjectDto;
+import com.gestion_obras.models.dtos.user.UserInfoDto;
 import com.gestion_obras.models.entities.Project;
 import com.gestion_obras.models.enums.StatusProject;
 import com.gestion_obras.services.sevicesmanager.ProjectServiceManager;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +34,26 @@ public class ProjectController {
     public List<Project> findAll() {
         return this.projectServiceManager.findAll();
     }
+
+    @GetMapping("/my-projects")
+    @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'ADMINISTRADOR')")
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<Project>> getProjectsByAuthenticatedUser() {
+        try {
+            // Obtener el usuario autenticado desde el contexto
+            UserInfoDto userInfo = (UserInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            // Buscar proyectos del usuario
+            List<Project> projects = projectServiceManager.findByUserId(userInfo.getNumberID());
+
+            return ResponseEntity.ok(projects);
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'ADMINISTRADOR')")
