@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -93,6 +94,7 @@ public class WorkZoneController {
     }
 
     @PutMapping("/{id}/status")
+    @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'ADMINISTRADOR')")
     public ResponseEntity<Void> updateWorkZoneStatus(@PathVariable Long id, @RequestParam StatusWorkZone status){
         int rowsAffected = this.workZoneServiceManager.updateWorkZoneStatus(id, status);
         if(rowsAffected > 0){

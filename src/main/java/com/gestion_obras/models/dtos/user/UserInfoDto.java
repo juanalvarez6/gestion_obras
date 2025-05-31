@@ -5,8 +5,9 @@ import lombok.Getter;
 
 @Getter
 public class UserInfoDto {
-    private String id;
-    private String name;
+    private Integer id;
+    private String numberID;
+    private String fullName;
     private String email;
     private RoleType role;
 }
