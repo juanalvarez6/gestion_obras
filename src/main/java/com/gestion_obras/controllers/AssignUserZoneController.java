@@ -6,6 +6,7 @@ import com.gestion_obras.models.entities.WorkZone;
 import com.gestion_obras.services.sevicesmanager.AssignUserZoneServiceManager;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/assign_user_zones")
@@ -35,6 +37,14 @@ public class AssignUserZoneController {
         return this.assignUserZoneServiceManager.findById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/user/{userId}")
+    @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'ADMINISTRADOR')")
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> getByUserId(@PathVariable String userId) {
+        Optional<WorkZone> assignUserZones = this.assignUserZoneServiceManager.findByUserId(userId);
+        return assignUserZones.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(assignUserZones);
     }
 
     @PostMapping
