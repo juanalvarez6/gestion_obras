@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,6 +41,7 @@ public class MaterialRequestController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('OPERADOR')")
     public MaterialRequest create(@RequestBody MaterialRequestDto materialRequest) {
         MaterialRequest materialRequestNew = this.mapToMaterialRequest(materialRequest);
         materialRequestNew.setStatus(StatusMaterialRequest.PENDIENTE);

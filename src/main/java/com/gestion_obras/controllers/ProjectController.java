@@ -3,6 +3,7 @@ package com.gestion_obras.controllers;
 import com.gestion_obras.models.dtos.project.ProjectDto;
 import com.gestion_obras.models.dtos.user.UserInfoDto;
 import com.gestion_obras.models.entities.Project;
+import com.gestion_obras.models.enums.RoleType;
 import com.gestion_obras.models.enums.StatusProject;
 import com.gestion_obras.services.sevicesmanager.ProjectServiceManager;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -53,8 +54,6 @@ public class ProjectController {
         }
     }
 
-
-
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'ADMINISTRADOR')")
     @Transactional(readOnly = true)
@@ -78,10 +77,14 @@ public class ProjectController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
+    @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'ADMINISTRADOR')")
     public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody ProjectDto updatedProject) {
         return this.projectServiceManager.findById(id)
                 .map(existingProject -> {
+                    UserInfoDto userInfo = (UserInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+                    if (userInfo.getRole().equals(RoleType.SUPERVISOR)) {
+                        updatedProject.setUserId(existingProject.getUserId());
+                    }
                     if (existingProject.getStatus() == StatusProject.FINALIZADO) {
                         return ResponseEntity.badRequest().build();
                     }

@@ -48,6 +48,7 @@ public class AssignUserZoneController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'ADMINISTRADOR')")
     public AssignUserZone create(@RequestBody AssignUserZoneDto assignUserZone) {
         AssignUserZone assignUserZoneNew = this.mapToAssignUserZone(assignUserZone);
         return this.assignUserZoneServiceManager.save(assignUserZoneNew);
