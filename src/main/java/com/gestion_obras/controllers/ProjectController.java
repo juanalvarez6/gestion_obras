@@ -37,7 +37,7 @@ public class ProjectController {
     }
 
     @GetMapping("/my-projects")
-    @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'ADMINISTRADOR')")
+    @PreAuthorize("hasAuthority('SUPERVISOR')")
     @Transactional(readOnly = true)
     public ResponseEntity<List<Project>> getProjectsByAuthenticatedUser() {
         try {

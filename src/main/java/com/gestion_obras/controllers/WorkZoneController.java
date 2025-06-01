@@ -1,5 +1,6 @@
 package com.gestion_obras.controllers;
 
+import com.gestion_obras.models.dtos.user.UserInfoDto;
 import com.gestion_obras.models.dtos.workzone.WorkZoneDto;
 import com.gestion_obras.models.entities.Project;
 import com.gestion_obras.models.entities.WorkZone;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +47,20 @@ public class WorkZoneController {
     public ResponseEntity<WorkZone> getById(@PathVariable Long id){
         return this.workZoneServiceManager.findById(id).map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("my-zones")
+    @PreAuthorize("hasAuthority('SUPERVISOR')")
+    public ResponseEntity<?> findZoneByUserId(){
+        try {
+            UserInfoDto userInfo = (UserInfoDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            List<WorkZone> workZones = this.workZoneServiceManager.findZoneByUserId(userInfo.getNumberID());
+
+            return ResponseEntity.ok(workZones);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @PostMapping

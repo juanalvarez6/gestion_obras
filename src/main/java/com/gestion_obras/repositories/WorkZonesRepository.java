@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -17,4 +18,6 @@ public interface WorkZonesRepository extends JpaRepository<WorkZone, Long> {
     @Query("UPDATE WorkZone w SET w.status = :status WHERE w.id = :id")
     int updateStatusById(@Param("id") Long id, @Param("status") StatusWorkZone status);
 
+    @Query("SELECT w FROM WorkZone w WHERE w.project.userId = :userId")
+    List<WorkZone> findZoneByUserId(@Param("userId") String userId);
 }
