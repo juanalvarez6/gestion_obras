@@ -30,7 +30,7 @@ public class ProjectController {
     private SimpMessagingTemplate messagingTemplate;
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'ADMINISTRADOR')")
+    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
     @Transactional(readOnly = true)
     public List<Project> findAll() {
         return this.projectServiceManager.findAll();
@@ -55,7 +55,7 @@ public class ProjectController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'ADMINISTRADOR')")
+    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
     @Transactional(readOnly = true)
     public ResponseEntity<Project> findById(@PathVariable Long id) {
         return this.projectServiceManager.findById(id)

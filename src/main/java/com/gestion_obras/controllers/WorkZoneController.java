@@ -38,12 +38,14 @@ public class WorkZoneController {
 
     @GetMapping
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
     public List<WorkZone> findAll() {
         return this.workZoneServiceManager.findAll();
     }
 
     @GetMapping("/{id}")
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
     public ResponseEntity<WorkZone> getById(@PathVariable Long id){
         return this.workZoneServiceManager.findById(id).map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -64,6 +66,7 @@ public class WorkZoneController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'ADMINISTRADOR')")
     public ResponseEntity<?> create(@RequestBody WorkZoneDto workZone) {
         return this.projectServiceManager.findById(workZone.getProjectId())
                 .map(existingProject -> {
@@ -94,6 +97,7 @@ public class WorkZoneController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'ADMINISTRADOR')")
     public ResponseEntity<WorkZone> update(@PathVariable Long id, @Valid @RequestBody WorkZoneDto updatedWorkZone) {
         return this.workZoneServiceManager.findById(id)
                 .map(existingWorkZone -> {
@@ -122,6 +126,7 @@ public class WorkZoneController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'ADMINISTRADOR')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         boolean deleted = workZoneServiceManager.delete(id);
         if(deleted) {
