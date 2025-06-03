@@ -15,4 +15,9 @@ public interface AssignUserZoneRepository extends JpaRepository<AssignUserZone, 
     @Query("SELECT a.workZone FROM AssignUserZone a WHERE a.userId = :userId")
     Optional<WorkZone> findByUserId(@Param("userId") String userId);
 
+    @Query("SELECT a FROM AssignUserZone a WHERE a.userId = :userId")
+    Optional<AssignUserZone> findAssignUserZoneByUserId(@Param("userId") String userId);
+
+
+
 }

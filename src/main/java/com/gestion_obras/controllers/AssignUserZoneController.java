@@ -1,6 +1,7 @@
 package com.gestion_obras.controllers;
 
 import com.gestion_obras.models.dtos.assignuserzone.AssignUserZoneDto;
+import com.gestion_obras.models.dtos.assignuserzone.AssignUsersToZoneDto;
 import com.gestion_obras.models.entities.AssignUserZone;
 import com.gestion_obras.models.entities.WorkZone;
 import com.gestion_obras.services.sevicesmanager.AssignUserZoneServiceManager;
@@ -52,6 +53,13 @@ public class AssignUserZoneController {
     public AssignUserZone create(@RequestBody AssignUserZoneDto assignUserZone) {
         AssignUserZone assignUserZoneNew = this.mapToAssignUserZone(assignUserZone);
         return this.assignUserZoneServiceManager.save(assignUserZoneNew);
+    }
+
+    @PostMapping("/assignUsersToZone")
+    @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'ADMINISTRADOR')")
+    public ResponseEntity<String> assignUsersToZone(@RequestBody AssignUsersToZoneDto dto) {
+        assignUserZoneServiceManager.assignUsersToZone(dto.getZoneId(), dto.getUserIds());
+        return ResponseEntity.ok("Usuarios asignados correctamente");
     }
 
     @PutMapping("/{id}")
