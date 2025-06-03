@@ -1,7 +1,6 @@
 package com.gestion_obras.models.dtos.task;
 
 import com.gestion_obras.models.enums.PriorityTask;
-import com.gestion_obras.models.enums.StatusTask;
 import lombok.Getter;
 
 @Getter
