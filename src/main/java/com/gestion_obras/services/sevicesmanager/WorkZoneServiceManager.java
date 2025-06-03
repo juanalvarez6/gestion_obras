@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class WorkZoneServiceManager extends GenericServiceManager<WorkZone, WorkZonesRepository> {
@@ -21,6 +20,11 @@ public class WorkZoneServiceManager extends GenericServiceManager<WorkZone, Work
     @Transactional(readOnly = true)
     public List<WorkZone> findZoneByUserId(String userId){
         return repository.findZoneByUserId(userId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<WorkZone> findByProjectId(Long projectId) {
+        return repository.findByProjectId(projectId);
     }
 
 }

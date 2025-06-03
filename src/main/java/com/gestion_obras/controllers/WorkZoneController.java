@@ -51,7 +51,7 @@ public class WorkZoneController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("my-zones")
+    @GetMapping("/my-zones")
     @PreAuthorize("hasAuthority('SUPERVISOR')")
     public ResponseEntity<?> findZoneByUserId(){
         try {
@@ -63,6 +63,12 @@ public class WorkZoneController {
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    @GetMapping("/zoneByProjectId")
+    @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'ADMINISTRADOR')")
+    public List<WorkZone> findZoneByProjectId(@RequestParam Long projectId) {
+        return this.workZoneServiceManager.findByProjectId(projectId);
     }
 
     @PostMapping

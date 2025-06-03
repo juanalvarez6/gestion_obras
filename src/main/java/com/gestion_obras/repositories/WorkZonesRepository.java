@@ -9,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface WorkZonesRepository extends JpaRepository<WorkZone, Long> {
@@ -20,4 +19,7 @@ public interface WorkZonesRepository extends JpaRepository<WorkZone, Long> {
 
     @Query("SELECT w FROM WorkZone w WHERE w.project.userId = :userId")
     List<WorkZone> findZoneByUserId(@Param("userId") String userId);
+
+    @Query("SELECT w FROM WorkZone w WHERE w.project.id = :projectId")
+    List<WorkZone> findByProjectId(@Param("projectId") Long projectId);
 }
