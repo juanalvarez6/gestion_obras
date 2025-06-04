@@ -64,6 +64,13 @@ public class MaterialRequestController {
         return ResponseEntity.ok(requests);
     }
 
+    @PatchMapping("/{id}/status")
+    @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'ADMINISTRADOR')")
+    public ResponseEntity<Void> updateStatus(@PathVariable Long id, @RequestParam StatusMaterialRequest status) {
+        boolean updated = materialRequestServiceManager.updateStatus(id, status);
+        return updated ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
+
     @PostMapping
     @PreAuthorize("hasAuthority('OPERADOR')")
     public MaterialRequest create(@RequestBody MaterialRequestDto materialRequest) {
