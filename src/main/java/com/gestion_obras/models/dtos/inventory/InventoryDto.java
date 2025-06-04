@@ -6,5 +6,4 @@ import lombok.Getter;
 public class InventoryDto {
     private Long projectId;
     private Long materialId;
-    private int availableQuantity;
 }
