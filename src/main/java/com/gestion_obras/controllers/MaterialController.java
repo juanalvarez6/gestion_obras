@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,11 +23,13 @@ public class MaterialController {
 
     @GetMapping
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'ADMINISTRADOR', 'OPERADOR')")
     public List<Material> findAll() {
         return this.materialServiceManager.findAll();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'ADMINISTRADOR', 'OPERADOR')")
     @Transactional(readOnly = true)
     public ResponseEntity<Material> getById(@PathVariable Long id) {
         return this.materialServiceManager.findById(id)
@@ -35,12 +38,14 @@ public class MaterialController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'ADMINISTRADOR', 'OPERADOR')")
     public Material create(@RequestBody MaterialDto material) {
         Material materialNew = this.mapToMaterial(material);
         return this.materialServiceManager.save(materialNew);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'ADMINISTRADOR')")
     public ResponseEntity<Material> update(@PathVariable Long id, @Valid @RequestBody MaterialDto updatedMaterial){
         return this.materialServiceManager.findById(id)
                 .map(existingMaterial -> {
@@ -53,6 +58,7 @@ public class MaterialController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'ADMINISTRADOR')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         boolean deleted = materialServiceManager.delete(id);
         return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
