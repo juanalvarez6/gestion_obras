@@ -28,12 +28,14 @@ public class AssignUserZoneController {
 
     @GetMapping
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
     public List<AssignUserZone> findAll() {
         return this.assignUserZoneServiceManager.findAll();
     }
 
     @GetMapping("/{id}")
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
     public ResponseEntity<AssignUserZone> getById(@PathVariable Long id) {
         return this.assignUserZoneServiceManager.findById(id)
                 .map(ResponseEntity::ok)
@@ -41,7 +43,7 @@ public class AssignUserZoneController {
     }
 
     @GetMapping("/user/{userId}")
-    @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'ADMINISTRADOR')")
+    @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'ADMINISTRADOR', 'OPERADOR')")
     @Transactional(readOnly = true)
     public ResponseEntity<?> getByUserId(@PathVariable String userId) {
         Optional<WorkZone> assignUserZones = this.assignUserZoneServiceManager.findByUserId(userId);
@@ -63,6 +65,7 @@ public class AssignUserZoneController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'ADMINISTRADOR')")
     public ResponseEntity<AssignUserZone> update(@PathVariable Long id, @Valid @RequestBody AssignUserZoneDto updatedAssignUserZone) {
         return this.assignUserZoneServiceManager.findById(id)
                 .map(existingAssignUserZone -> {;
@@ -76,6 +79,7 @@ public class AssignUserZoneController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
     public ResponseEntity<Void> deleteAssignUserZone(@PathVariable Long id) {
         boolean deleted = assignUserZoneServiceManager.delete(id);
         return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();

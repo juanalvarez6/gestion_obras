@@ -27,17 +27,30 @@ public class MaterialRequestController {
     private MaterialRequestServiceManager materialRequestServiceManager;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
     @Transactional(readOnly = true)
     public List<MaterialRequest> findAll() {
         return this.materialRequestServiceManager.findAll();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
     @Transactional(readOnly = true)
     public ResponseEntity<MaterialRequest> getById(@PathVariable Long id) {
         return this.materialRequestServiceManager.findById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/by-user/{userId}")
+    @PreAuthorize("hasAuthority('OPERADOR')")
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<MaterialRequest>> getByUserId(@PathVariable String userId) {
+        List<MaterialRequest> requests = materialRequestServiceManager.findByUserId(userId);
+        if (requests == null || requests.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(requests);
     }
 
     @PostMapping
@@ -49,6 +62,7 @@ public class MaterialRequestController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('OPERADOR')")
     public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody MaterialRequestDto updatedMaterialRequest) {
         return this.materialRequestServiceManager.findById(id)
                 .map(existingMaterialRequest -> {
@@ -65,6 +79,7 @@ public class MaterialRequestController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('OPERADOR')")
     public ResponseEntity<Void> deleteMaterialRequest(@PathVariable Long id) {
         boolean deleted = materialRequestServiceManager.delete(id);
         return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
@@ -85,18 +100,22 @@ public class MaterialRequestController {
             materialRequest.setProject(project);
         }
 
-        if(materialRequestDto.getUserId() != null)
+        if (materialRequestDto.getUserId() != null)
             materialRequest.setUserId(materialRequestDto.getUserId());
 
         materialRequest.setRequestedQuantity(materialRequestDto.getRequestedQuantity());
 
-        if(materialRequestDto.getComments() != null)
+        if (materialRequestDto.getComments() != null)
             materialRequest.setComments(materialRequestDto.getComments());
 
-        if(materialRequestDto.getMaterialQuality() != null)
+        if (materialRequestDto.getMaterialQuality() != null)
             materialRequest.setMaterialQuality(materialRequestDto.getMaterialQuality());
+
+        if (materialRequestDto.getDeliveryDate() != null)
+            materialRequest.setDeliveryDate(materialRequestDto.getDeliveryDate());
 
         return materialRequest;
     }
+
 
 }
