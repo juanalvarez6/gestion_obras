@@ -14,4 +14,8 @@ public class MaterialRequestServiceManager extends GenericServiceManager<Materia
         return this.repository.findByUserId(userId);
     }
 
+    public List<MaterialRequest> findByProjectId(Long projectId) {
+        return this.repository.findByProjectId(projectId);
+    }
+
 }

@@ -11,4 +11,5 @@ public interface MaterialRequestRepository extends JpaRepository<MaterialRequest
 
     List<MaterialRequest> findByUserId(String userId);
 
+    List<MaterialRequest> findByProjectId(Long projectId);
 }

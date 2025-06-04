@@ -53,6 +53,17 @@ public class MaterialRequestController {
         return ResponseEntity.ok(requests);
     }
 
+    @GetMapping("/by-project/{projectId}")
+    @PreAuthorize("hasAnyAuthority('SUPERVISOR', 'ADMINISTRADOR')")
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<MaterialRequest>> getByProjectId(@PathVariable Long projectId) {
+        List<MaterialRequest> requests = materialRequestServiceManager.findByProjectId(projectId);
+        if (requests == null || requests.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(requests);
+    }
+
     @PostMapping
     @PreAuthorize("hasAuthority('OPERADOR')")
     public MaterialRequest create(@RequestBody MaterialRequestDto materialRequest) {
@@ -72,6 +83,7 @@ public class MaterialRequestController {
                     }
                     MaterialRequest materialRequest = mapToMaterialRequest(updatedMaterialRequest);
                     materialRequest.setId(id);
+                    materialRequest.setStatus(existingMaterialRequest.getStatus());
                     MaterialRequest savedMaterialRequest = this.materialRequestServiceManager.save(materialRequest);
                     return ResponseEntity.ok(savedMaterialRequest);
                 })
